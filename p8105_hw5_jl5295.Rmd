@@ -1,0 +1,21 @@
+---
+title: "p8105_hw5_jl5295"
+author: "Jana Lee"
+date: "11/5/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(p8105.datasets)
+library(ggplot2)
+library (knitr)
+library(viridis)
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+```
+
