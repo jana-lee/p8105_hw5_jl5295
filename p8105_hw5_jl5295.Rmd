@@ -4,14 +4,6 @@ author: "Jana Lee"
 date: "11/5/2019"
 output: html_document
 ---
-
-## Problem 1
-The code chunk below loads the iris dataset from the tidyverse package and introduces some missing values in each column. The purpose of this problem is to fill in those missing values.
-There are two cases to address:
-
-For numeric variables, you should fill in missing values with the mean of non-missing values
-For character variables, you should fill in missing values with "virginica"
-Write a function that takes a vector as an argument; replaces missing values using the rules defined above; and returns the resulting vector. Apply this function to the columns of iris_with_missing using a map statement.
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
@@ -22,9 +14,17 @@ library(viridis)
 knitr::opts_chunk$set(
   fig.width = 6,
   fig.asp = .6,
-  out.width = "90%"
-)
+  out.width = "90%")
+```
 
+## Problem 1
+The code chunk below loads the iris dataset from the tidyverse package and introduces some missing values in each column. The purpose of this problem is to fill in those missing values.
+There are two cases to address:
+
+For numeric variables, you should fill in missing values with the mean of non-missing values. For character variables, you should fill in missing values with "virginica"
+
+Write a function that takes a vector as an argument; replaces missing values using the rules defined above; and returns the resulting vector. Apply this function to the columns of iris_with_missing using a map statement.
+```{r code chunk from problem}
 set.seed(10)
 
 iris_with_missing = iris %>% 
@@ -32,10 +32,24 @@ iris_with_missing = iris %>%
   mutate(Species = as.character(Species))
 ```
 
+```{r writing functions}
+fill_missing_values = function(x) {
+  if (is.numeric(x)) {
+  replace(x, is.na(x), mean(x, na.rm = TRUE)) 
+}
+  
+  else if (!is.numeric(x)) {
+    replace(x, is.na(x), "virginica")
+  }
+}
+
+iris_without_missing = map_df(iris_with_missing, ~fill_missing_values(.x))
+```
+**Comment:** A new dataframe `iris_without_missing` was generated to test if the function works. `iris_without_missing` has correctly computed the mean value for all numeric missing values and has applied to word "virginica" to all missing character values.
 
 
 ## Problem 2
-```{r}
+```{r iteration of csv files for longitudinal study}
 csv_data = list.files("./data", pattern = "*.csv", full.names = TRUE) %>% 
   set_names(nm = basename(.)) %>% 
   map_df(read_csv, col_names = TRUE, col_types = cols(), .id = "filename") %>%
@@ -64,6 +78,7 @@ csv_data = list.files("./data", pattern = "*.csv", full.names = TRUE) %>%
 csv_data + labs(color = "Participant Arm and Week")
 ```
 **Comment:** Assuming that higher positive values signify better response, participants in the experimental arm are more likely to have higher responses to treatment, judging from the blue to purple coloring of the lines. Similarly, controls, indicated by the red to green coloring, have lower responses and have a higher frequency of having negative response values (i.e. control patient, week 5). More context to this dataset would allow us to glean further insight about the responses to this longitudinal study.
+
 
 ## Problem 3
 When designing an experiment or analysis, a common question is whether it is likely that a true effect will be detected – put differently, whether a false null hypothesis will be rejected. The probability that a false null hypothesis is rejected is referred to as power, and it depends on several factors, including: the sample size; the effect size; and the error variance. In this problem, you will conduct a simulation to explore power in a simple linear regression.

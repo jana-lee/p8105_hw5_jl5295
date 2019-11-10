@@ -372,7 +372,25 @@ summary {
 <div id="problem-1" class="section level2">
 <h2>Problem 1</h2>
 <p>The code chunk below loads the iris dataset from the tidyverse package and introduces some missing values in each column. The purpose of this problem is to fill in those missing values. There are two cases to address:</p>
-<p>For numeric variables, you should fill in missing values with the mean of non-missing values For character variables, you should fill in missing values with “virginica” Write a function that takes a vector as an argument; replaces missing values using the rules defined above; and returns the resulting vector. Apply this function to the columns of iris_with_missing using a map statement.</p>
+<p>For numeric variables, you should fill in missing values with the mean of non-missing values. For character variables, you should fill in missing values with “virginica”</p>
+<p>Write a function that takes a vector as an argument; replaces missing values using the rules defined above; and returns the resulting vector. Apply this function to the columns of iris_with_missing using a map statement.</p>
+<pre class="r"><code>set.seed(10)
+
+iris_with_missing = iris %&gt;% 
+  map_df(~replace(.x, sample(1:150, 20), NA)) %&gt;%
+  mutate(Species = as.character(Species))</code></pre>
+<pre class="r"><code>fill_missing_values = function(x) {
+  if (is.numeric(x)) {
+  replace(x, is.na(x), mean(x, na.rm = TRUE)) 
+}
+  
+  else if (!is.numeric(x)) {
+    replace(x, is.na(x), &quot;virginica&quot;)
+  }
+}
+
+iris_without_missing = map_df(iris_with_missing, ~fill_missing_values(.x))</code></pre>
+<p><strong>Comment:</strong> A new dataframe <code>iris_without_missing</code> was generated to test if the function works. <code>iris_without_missing</code> has correctly computed the mean value for all numeric missing values and has applied to word “virginica” to all missing character values.</p>
 </div>
 <div id="problem-2" class="section level2">
 <h2>Problem 2</h2>
